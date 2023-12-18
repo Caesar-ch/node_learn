@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <button id="btn">获取</button>
+    <script>
+        const btn = document.querySelector('#btn')
+        btn.addEventListener('click',
+            async function () {
+                // let res = await getData('GET', 'getPeople')
+                // let res = await getData('POST', 'addPeople')
+                let res = await getData('POST', 'addImage')
+                // let res = await getImg('GET', 'getImage')
+                console.log(res);
+            }
+        )
+        function getData(method, path) {
+            return new Promise((resolve, rejected) => {
+                const xhr = new XMLHttpRequest()
+                xhr.open(method, `http://localhost:3000/${path}`)
+                xhr.send()
+                xhr.onreadystatechange = function () {
+                    if (xhr.readyState === 4 && xhr.status === 200) {
+                        resolve(xhr.responseText)
+                    }
+                }
+            })
+        }
+        function getImg(method, path) {
+            return new Promise((resolve, rejected) => {
+                const xhr = new XMLHttpRequest()
+                xhr.open(method, `http://localhost:3000/${path}`)
+                xhr.responseType = 'blob'; // 设置响应类型为Blob，以便我们可以处理图像数据
+                xhr.onload = function (e) {
+                    if (this.status == 200) {
+                        let img = document.createElement('img');
+                        let url = window.URL || window.webkitURL;
+                        img.src = url.createObjectURL(this.response);
+                        img.style.width = '300px';
+                        document.body.appendChild(img); // 将图像元素添加到页面上
+                    }
+                };
+                xhr.send();
+            })
+        }
+    </script>
+</body>
+
+</html>
