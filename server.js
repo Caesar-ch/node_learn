@@ -5,6 +5,13 @@ const fs = require('fs');
 
 const app = express();
 
+function logger(req, res, next) {
+    const time = new Date();
+    console.log(`[${time.toLocaleString()}] ${req.method}  ${req.url}`);
+    next()
+}
+// 全局中间件
+app.use(logger);
 app.use(cors());
 
 const db = mysql.createPool({
@@ -13,7 +20,11 @@ const db = mysql.createPool({
     password: 'ch123456',
     database: 'tset',
 })
+app.get('/user', (req, res) => {
+    res.send('user')
+});
 app.get('/getPeople', (req, res) => {
+    console.log(req.query);// 打印的是？后面的值
     db.query('SELECT * FROM username',
         (err, results) => {
             if (err) {
