@@ -11,6 +11,13 @@ const user = require('./router/user')
 const app = express();
 // 注册静态资源中间件
 app.use('/public', express.static('public')) // 在这里使用理这个中间件之后，在html里就可以写src为./public/img/people.png
+function logger(req, res, next) {
+    const time = new Date();
+    console.log(`[${time.toLocaleString()}] ${req.method}  ${req.url}`);
+    next()
+}
+// 全局中间件
+app.use(logger);
 app.use(cors());
 app.use(cookieParser('123456'))
 app.use(session)
@@ -24,41 +31,8 @@ const db = mysql.createPool({
     password: 'ch123456',
     database: 'tset',
 })
-
-
-// 接收所有的请求的中间件
-app.use((req, res, next) => {
-    console.log('全部请求 中间件');
-    next()
-})
-app.use(session({
-    // sessionId 的名字。The name of the session ID cookie to set in the response
-    name: 'userCookie',
-    // 秘钥
-    secret: 'pjl-system-demo',
-    cookie: {
-        maxAge: 1000 * 600, // 60秒过期
-        // true - 只有 https 才能访问 cookie
-        secure: false
-    },
-    // true - 初始就给到 cookie。例如没有登录，直接点击“获取用户列表”，也会给到 cookie
-    saveUninitialized: true,
-}))
-
-app.get('/index.html', function (req, res) {
-    res.sendFile(__dirname + "/" + "index.html");
-})
-
-// 当客户端访问 /getPeople 请求的时候走当前中间件
-app.use('/getPeople', (req, res, next) => {
-    console.log('单个请求 中间件 ');
-    next()// 加next就是中间件不用在这里处理req逻辑
-})
-
-
 app.get('/getPeople', (req, res) => {
-    console.log('xx', req.signedCookies.user);
-    db.query('SELECT * FROM user',
+    db.query('SELECT * FROM username',
         (err, results) => {
             if (err) {
                 console.log(err);
