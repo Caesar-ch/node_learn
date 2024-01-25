@@ -9,14 +9,26 @@
 
 <body>
     <button id="btn">获取</button>
+    <button id="img">图片</button>
     <script>
         const btn = document.querySelector('#btn')
+        const img = document.querySelector('#img')
         btn.addEventListener('click',
             async function () {
-                // let res = await getData('GET', 'getPeople')
+                let res = await getData('GET', 'getPeople')
                 // let res = await getData('POST', 'addPeople')
-                let res = await getData('POST', 'addImage')
                 // let res = await getImg('GET', 'getImage')
+                // let res = await getData('GET', 'deleteData')
+                // let res = await getData('GET', 'home/list')
+                console.log(res);
+            }
+        )
+        img.addEventListener('click', 
+        async function () {
+                // let res = await getData('POST', 'addPeople')
+                let res = await getImg('GET', 'getImage')
+                // let res = await getData('GET', 'deleteData')
+                // let res = await getData('GET', 'home/list')
                 console.log(res);
             }
         )
@@ -35,7 +47,7 @@
         function getImg(method, path) {
             return new Promise((resolve, rejected) => {
                 const xhr = new XMLHttpRequest()
-                xhr.open(method, `http://localhost:3000/${path}`)
+                xhr.open(method, `http://localhost:3000/${path}?username=xiaosi`)
                 xhr.responseType = 'blob'; // 设置响应类型为Blob，以便我们可以处理图像数据
                 xhr.onload = function (e) {
                     if (this.status == 200) {
@@ -46,6 +58,7 @@
                         document.body.appendChild(img); // 将图像元素添加到页面上
                     }
                 };
+                xhr.withCredentials = true
                 xhr.send();
             })
         }
